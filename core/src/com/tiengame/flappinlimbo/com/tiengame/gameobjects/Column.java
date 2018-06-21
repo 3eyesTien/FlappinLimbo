@@ -9,6 +9,8 @@ public class Column extends Scrollable{
 
     private Random r;
 
+    private boolean isScored = false;
+
     // Collision Rectangles
     private Rectangle skullUp, skullDown, columnUp, columnDown;
 
@@ -68,6 +70,24 @@ public class Column extends Scrollable{
 
         // Change the height of the column to a random number
         height = r.nextInt(90) + 15;
+
+        isScored = false;
+    }
+
+    public void onRestart(float x, float scrollSpeed)
+    {
+        position.x = x;
+        velocity.x = scrollSpeed;
+    }
+
+    public boolean isScored()
+    {
+        return isScored;
+    }
+
+    public void setScored(boolean bool)
+    {
+        isScored = bool;
     }
 
     public Rectangle getSkullUp() {return skullUp;}

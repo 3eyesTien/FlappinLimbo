@@ -1,7 +1,12 @@
 package com.tiengame.flappinlimbo.com.tiengame.gameobjects;
 
+import com.badlogic.gdx.assets.loaders.AssetLoader;
+import com.tiengame.flappinlimbo.com.tiengame.gameworld.GameWorld;
+
 // Handles Scrollable objects on screen
 public class ScrollHandler {
+
+    private GameWorld gameWorld;
 
     // Create the five scrollable objects
     private Grass frontGrass, backGrass;
@@ -12,8 +17,9 @@ public class ScrollHandler {
     public static final int COLUMN_GAP = 49;
 
     // Constructor takes float to tell us where the grass and columns should be drawn
-    public ScrollHandler(float posY)
+    public ScrollHandler(GameWorld gameWorld, float posY)
     {
+        this.gameWorld = gameWorld;
         frontGrass = new Grass(0, posY, 143, 11, SCROLL_SPEED);
         backGrass = new Grass(frontGrass.getTailX(), posY, 143, 11, SCROLL_SPEED);
 
@@ -67,7 +73,37 @@ public class ScrollHandler {
     // Return true if any of the columns hit bird
     public boolean collides(Bird bird)
     {
+        if(!column1.isScored() && column1.getX() + (column1.getWidth() / 2) < bird.getX() + bird.getWidth())
+        {
+            addScore(1);
+            column1.setScored(true);
+            //AssetLoader.score.play();
+        } else if(!column2.isScored() && column2.getX() + (column2.getWidth() / 2) < bird.getX() + bird.getWidth())
+        {
+            addScore(1);
+            column2.setScored(true);
+            //AssetLoader.score.play();
+        } else if(!column3.isScored() && column3.getX() + (column3.getWidth() / 2) < bird.getX() + bird.getWidth())
+        {
+            addScore(1);
+            column3.setScored(true);
+            //AssetLoader.score.play();
+        }
         return (column1.collides(bird) || column2.collides(bird) || column3.collides(bird));
+    }
+
+    private void addScore(int increment)
+    {
+        gameWorld.addScore(increment);
+    }
+
+    public void onRestart()
+    {
+        frontGrass.onRestart(0, SCROLL_SPEED);
+        backGrass.onRestart(frontGrass.getTailX(), SCROLL_SPEED);
+        column1.onRestart(210, SCROLL_SPEED);
+        column2.onRestart(column1.getTailX() + COLUMN_GAP, SCROLL_SPEED);
+        column3.onRestart(column2.getTailX() + COLUMN_GAP, SCROLL_SPEED);
     }
 
     // Getters for objects

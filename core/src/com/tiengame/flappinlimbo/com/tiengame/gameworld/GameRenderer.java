@@ -169,6 +169,16 @@ public class GameRenderer {
             sb.draw(birdAnimations.getKeyFrame(runTime), bird.getX(), bird.getY(), bird.getWidth() / 2.0f, bird.getHeight() / 2.0f,
                     bird.getWidth(), bird.getHeight(), 1, 1, bird.getRotation());
         }
+
+        // Convert integer into string
+        String score = gameWorld.getScore() + "";
+
+        // Draw shadow first
+        AssetsLoader.fontShadow.draw(sb, "" + gameWorld.getScore(), (136 / 2) - (3 * score.length()), 12);
+
+        // Draw text
+        AssetsLoader.font.draw(sb, "" + gameWorld.getScore(), (136 / 2) - (3 * score.length() - 1), 11);
+
         sb.end();
     }
 }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class AssetsLoader {
@@ -16,7 +17,9 @@ public class AssetsLoader {
 
     public static TextureRegion skullUp, skullDown, column;
 
-    public static Sound dead;
+    public static Sound dead, flap, score;
+
+    public static BitmapFont font, fontShadow;
 
     public static void load()
     {
@@ -52,11 +55,26 @@ public class AssetsLoader {
         column.flip(false, true);
 
         dead = Gdx.audio.newSound(Gdx.files.internal("sounds/dead.wav"));
+        flap = Gdx.audio.newSound(Gdx.files.internal("sounds/flap.wav"));
+        //score = Gdx.audio.newSound(Gdx.files.internal("sounds/ .wav"));
+
+        font = new BitmapFont(Gdx.files.internal("textures/text.fnt"));
+        font.getData().setScale(.25f, -.25f);
+        fontShadow = new BitmapFont(Gdx.files.internal("textures/shadow.fnt"));
+        fontShadow.getData().setScale(.25f, -.25f);
+
     }
 
     public static void dispose()
     {
         // Dispose texture when we are finished
         texture.dispose();
+
+        dead.dispose();
+        flap.dispose();
+        //score.dispose();
+
+        font.dispose();
+        fontShadow.dispose();
     }
 }

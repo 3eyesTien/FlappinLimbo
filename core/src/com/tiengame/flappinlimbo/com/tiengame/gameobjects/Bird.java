@@ -2,6 +2,7 @@ package com.tiengame.flappinlimbo.com.tiengame.gameobjects;
 
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
+import com.tiengame.flappinlimbo.com.tiengame.helpers.AssetsLoader;
 
 public class Bird {
 
@@ -12,6 +13,8 @@ public class Bird {
     private float rotation; // For handling bird rotation when it jumps and flies
     private int width;
     private int height;
+
+    private boolean isAlive;
 
     private Circle boundingCircle;
 
@@ -24,6 +27,7 @@ public class Bird {
         velocity = new Vector2(0,0);
         acceleration = new Vector2(0, 460);
         boundingCircle = new Circle();
+        isAlive = true;
     }
 
     public void update(float delta)
@@ -34,6 +38,13 @@ public class Bird {
         // Limit velocity to 200
         if(this.velocity.y > 200){
             this.velocity.y = 200;
+        }
+
+        // Ceiling check
+        if(position.y < -13)
+        {
+            position.y = -13;
+            velocity.y = 0;
         }
 
         this.position.add(this.velocity.cpy().scl(delta));  // Add updated scaled velocity to bird's position
@@ -54,7 +65,7 @@ public class Bird {
         }
 
         // Rotate clockwise (falling)
-        if(isFalling())
+        if(isFalling() || !isAlive)
         {
             rotation += 480 * delta;
             if(rotation > 90)
@@ -66,7 +77,23 @@ public class Bird {
 
     public void onClick()
     {
-        this.velocity.y = -140;
+        if(isAlive)
+        {
+            AssetsLoader.flap.play();
+            this.velocity.y = -140;
+        }
+
+    }
+
+    public void onRestart(int y)
+    {
+        rotation = 0;
+        position.y = 0;
+        velocity.x = 0;
+        velocity.y = 0;
+        acceleration.x = 0;
+        acceleration.y = 0;
+        isAlive = true;
     }
 
     public float getX()
@@ -103,8 +130,25 @@ public class Bird {
     // Determine when to stop animating the bird's flap
     public boolean shouldNotFlap()
     {
-        return velocity.y > 70;
+
+        return velocity.y > 70 || !isAlive;
     }
 
     public Circle getBoundingCircle() { return boundingCircle; }
+
+    public boolean isAlive() { return isAlive; }
+
+    public void die()
+    {
+        isAlive = false;
+        velocity.y = 0;
+    }
+
+    public void decelerate()
+    {
+        // Bird should stop accelerating downwards once it's dead
+        acceleration.y = 0;
+    }
+
+
 }
