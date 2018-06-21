@@ -37,6 +37,11 @@ public class Scrollable {
         isOffScreen = false;
     }
 
+    public void stop()
+    {
+        velocity.x = 0;
+    }
+
     public boolean isOffScreen()
     {
         return isOffScreen;

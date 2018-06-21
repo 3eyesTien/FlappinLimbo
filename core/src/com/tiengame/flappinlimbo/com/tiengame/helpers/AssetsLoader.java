@@ -1,6 +1,7 @@
 package com.tiengame.flappinlimbo.com.tiengame.helpers;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -14,6 +15,8 @@ public class AssetsLoader {
     public static TextureRegion bird, downBird, upBird;
 
     public static TextureRegion skullUp, skullDown, column;
+
+    public static Sound dead;
 
     public static void load()
     {
@@ -47,6 +50,8 @@ public class AssetsLoader {
 
         column = new TextureRegion(texture, 136, 16, 22, 3);
         column.flip(false, true);
+
+        dead = Gdx.audio.newSound(Gdx.files.internal("sounds/dead.wav"));
     }
 
     public static void dispose()

@@ -1,6 +1,7 @@
 package com.tiengame.flappinlimbo.com.tiengame.gameworld;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -127,10 +128,6 @@ public class GameRenderer {
         // Draw background color
         shapeRenderer.setColor(55/255.0f, 80/255.0f, 100/255.0f, 1);
         shapeRenderer.rect(0, 0, 136, midPointY + 66);
-
-        // Draw grass
-        shapeRenderer.setColor(111/255.0f, 186/255.0f, 45/255.0f, 1);
-        shapeRenderer.rect(0, midPointY + 66, 136, 11);
 
         // Draw dirt
         shapeRenderer.setColor(147 / 255.0f, 80 / 255.0f, 27 / 255.0f, 1);

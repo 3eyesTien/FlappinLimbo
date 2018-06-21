@@ -17,9 +17,9 @@ public class ScrollHandler {
         frontGrass = new Grass(0, posY, 143, 11, SCROLL_SPEED);
         backGrass = new Grass(frontGrass.getTailX(), posY, 143, 11, SCROLL_SPEED);
 
-        column1 = new Column(210, 0, 22, 60, SCROLL_SPEED);
-        column2 = new Column(column1.getTailX() + COLUMN_GAP, 0, 22, 70, SCROLL_SPEED);
-        column3 = new Column(column2.getTailX() + COLUMN_GAP, 0, 22, 60, SCROLL_SPEED);
+        column1 = new Column(210, 0, 22, 60, SCROLL_SPEED, posY);
+        column2 = new Column(column1.getTailX() + COLUMN_GAP, 0, 22, 70, SCROLL_SPEED, posY);
+        column3 = new Column(column2.getTailX() + COLUMN_GAP, 0, 22, 60, SCROLL_SPEED, posY);
     }
 
     public void update(float delta)
@@ -53,6 +53,21 @@ public class ScrollHandler {
         {
             backGrass.reset(frontGrass.getTailX());
         }
+    }
+
+    public void stop()
+    {
+        frontGrass.stop();
+        backGrass.stop();
+        column1.stop();
+        column2.stop();
+        column3.stop();
+    }
+
+    // Return true if any of the columns hit bird
+    public boolean collides(Bird bird)
+    {
+        return (column1.collides(bird) || column2.collides(bird) || column3.collides(bird));
     }
 
     // Getters for objects

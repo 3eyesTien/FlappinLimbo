@@ -1,5 +1,6 @@
 package com.tiengame.flappinlimbo.com.tiengame.gameobjects;
 
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 
 public class Bird {
@@ -12,14 +13,17 @@ public class Bird {
     private int width;
     private int height;
 
+    private Circle boundingCircle;
+
     public Bird(float x, float y, int width, int height)
     {
 
         this.width = width;
         this.height = height;
-        this.position = new Vector2(x, y);
-        this.velocity = new Vector2(0,0);
-        this.acceleration = new Vector2(0, 460);
+        position = new Vector2(x, y);
+        velocity = new Vector2(0,0);
+        acceleration = new Vector2(0, 460);
+        boundingCircle = new Circle();
     }
 
     public void update(float delta)
@@ -33,6 +37,10 @@ public class Bird {
         }
 
         this.position.add(this.velocity.cpy().scl(delta));  // Add updated scaled velocity to bird's position
+
+        // Set the bounding circle's center to be (9,6) with respect to the bird
+        // Set the radius to 6.5f
+        boundingCircle.set(position.x + 9, position.y + 6, 6.5f);
 
         // Rotate counterclockwise (rising)
         if(velocity.y < 0)
@@ -98,4 +106,5 @@ public class Bird {
         return velocity.y > 70;
     }
 
+    public Circle getBoundingCircle() { return boundingCircle; }
 }
