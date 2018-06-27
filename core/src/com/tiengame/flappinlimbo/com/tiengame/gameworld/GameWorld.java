@@ -12,6 +12,7 @@ public class GameWorld {
 
     private Bird bird;
     private ScrollHandler scrollHandler;
+    private float runTime = 0;
 
     private Rectangle ground;
 
@@ -21,15 +22,16 @@ public class GameWorld {
     private GameState currentState;
 
     public enum GameState{
+        MENU,
         READY,
         RUNNING,
-        GAMEOVER
+        GAMEOVER,
+        HIGHSCORE
     }
 
     public GameWorld(int midPointY){
-        currentState = GameState.READY;
+        currentState = GameState.MENU;
         this.midPointY = midPointY;
-
         bird = new Bird(33, midPointY - 5, 17, 12);
 
         // The grass starts at 66 pixels below midPointY
@@ -40,22 +42,26 @@ public class GameWorld {
 
     public void update(float delta)
     {
+        runTime += delta;
         switch(currentState)
         {
             case READY:
+            case MENU:
                 updateReady(delta);
                 break;
 
             case RUNNING:
-            default:
                 updateRunning(delta);
+                break;
+            default:
                 break;
         }
     }
 
     public void updateReady(float delta)
     {
-
+        bird.updateReady(runTime);
+        scrollHandler.updateReady(delta);
     }
 
     public void updateRunning(float delta){
@@ -84,13 +90,20 @@ public class GameWorld {
             bird.die();
             bird.decelerate();
             currentState = GameState.GAMEOVER;
+
+            if(score > AssetsLoader.getHighScore())
+            {
+                AssetsLoader.setHighScore(score);
+                currentState = GameState.HIGHSCORE;
+            }
         }
-        Gdx.app.log("GameWorld", "update");
     }
 
     public Bird getBird() {
         return bird;
     }
+
+    public int getMidPointY() { return midPointY; }
 
     public int getScore()
     {
@@ -114,6 +127,8 @@ public class GameWorld {
         currentState = GameState.RUNNING;
     }
 
+    public void ready() { currentState = GameState.READY; }
+
     public void restart()
     {
         currentState = GameState.READY;
@@ -127,4 +142,13 @@ public class GameWorld {
     {
         return currentState == GameState.GAMEOVER;
     }
+
+    public boolean isHighScore()
+    {
+        return currentState == GameState.HIGHSCORE;
+    }
+
+    public boolean isMenu() { return currentState == GameState.MENU; }
+
+    public boolean isRunning() { return currentState == GameState.RUNNING; }
 }

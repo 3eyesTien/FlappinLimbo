@@ -9,7 +9,6 @@ public class FLGame extends Game {
 
 	@Override
 	public void create () {
-		Gdx.app.log("FLGame","created" );
 		AssetsLoader.load();
 	    setScreen(new GameScreen());
 	}

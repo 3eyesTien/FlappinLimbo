@@ -13,6 +13,10 @@ import com.tiengame.flappinlimbo.com.tiengame.gameobjects.Column;
 import com.tiengame.flappinlimbo.com.tiengame.gameobjects.Grass;
 import com.tiengame.flappinlimbo.com.tiengame.gameobjects.ScrollHandler;
 import com.tiengame.flappinlimbo.com.tiengame.helpers.AssetsLoader;
+import com.tiengame.flappinlimbo.com.tiengame.helpers.InputHandler;
+import com.tiengame.flappinlimbo.com.tiengame.ui.SimpleButton;
+
+import java.util.List;
 
 // Responsible for handling rendering processes
 public class GameRenderer {
@@ -38,11 +42,15 @@ public class GameRenderer {
     private TextureRegion midBird, downBird, upBird;
     private TextureRegion skullUp, skullDown, column;
 
-    public GameRenderer(GameWorld world, int gameHeight, int midPointY){
+    // Buttons
+    private List<SimpleButton> menuButtons;
+
+    public GameRenderer(GameWorld world, int gameHeight, int midPointY) {
         gameWorld = world;
 
-        this.gameHeight = gameHeight;
+//        this.gameHeight = gameHeight;
         this.midPointY = midPointY;
+        this.menuButtons = ((InputHandler) Gdx.input.getInputProcessor()).getMenuButtons();
 
         camera = new OrthographicCamera();
         camera.setToOrtho(true, 136, gameHeight);
@@ -60,8 +68,7 @@ public class GameRenderer {
         initAssets();
     }
 
-    private void initGameObjects()
-    {
+    private void initGameObjects() {
         bird = gameWorld.getBird();
         scrollHandler = gameWorld.getScrollHandler();
         frontGrass = scrollHandler.getFrontGrass();
@@ -71,8 +78,7 @@ public class GameRenderer {
         column3 = scrollHandler.getColumn3();
     }
 
-    private void initAssets()
-    {
+    private void initAssets() {
         this.background = AssetsLoader.background;
         this.grass = AssetsLoader.grass;
         this.birdAnimations = AssetsLoader.birdAnimations;
@@ -84,15 +90,12 @@ public class GameRenderer {
         this.column = AssetsLoader.column;
     }
 
-    private void drawGrass()
-    {
+    private void drawGrass() {
         sb.draw(grass, frontGrass.getX(), frontGrass.getY(), frontGrass.getWidth(), frontGrass.getHeight());
         sb.draw(grass, backGrass.getX(), backGrass.getY(), backGrass.getWidth(), backGrass.getHeight());
     }
 
-    private void drawSkulls()
-    {
-        // Temp code
+    private void drawSkulls() {
         sb.draw(skullUp, column1.getX() - 1, column1.getY() + column1.getHeight() - 14, 24, 14);
         sb.draw(skullDown, column1.getX() - 1, column1.getY() + column1.getHeight() + 45, 24, 14);
 
@@ -103,9 +106,7 @@ public class GameRenderer {
         sb.draw(skullDown, column3.getX() - 1, column3.getY() + column3.getHeight() + 45, 24, 14);
     }
 
-    private void drawColumns()
-    {
-        // Temp code
+    private void drawColumns() {
         sb.draw(column, column1.getX(), column1.getY(), column1.getWidth(), column1.getHeight());
         sb.draw(column, column1.getX(), column1.getY() + column1.getHeight() + 45, column1.getWidth(), midPointY + 66 - (column1.getHeight() + 45));
 
@@ -116,8 +117,36 @@ public class GameRenderer {
         sb.draw(column, column3.getX(), column3.getY() + column3.getHeight() + 45, column3.getWidth(), midPointY + 66 - (column3.getHeight() + 45));
     }
 
-    public void render(float runTime){
-        Gdx.app.log("GameRenderer", "render");
+    private void drawCenteredBird(float runTime) {
+        sb.draw(birdAnimations.getKeyFrame(runTime), 59, bird.getY() - 15, bird.getWidth() / 2.0f, bird.getHeight() / 2.0f, bird.getWidth(), bird.getHeight(), 1, 1, bird.getRotation());
+    }
+
+    private void drawBird(float runTime) {
+        if (bird.shouldNotFlap()) {
+            sb.draw(midBird, bird.getX(), bird.getY(), bird.getWidth() / 2.0f, bird.getHeight() / 2.0f,
+                    bird.getWidth(), bird.getHeight(), 1, 1, bird.getRotation());
+        } else {
+            sb.draw(birdAnimations.getKeyFrame(runTime), bird.getX(), bird.getY(), bird.getWidth() / 2.0f, bird.getHeight() / 2.0f,
+                    bird.getWidth(), bird.getHeight(), 1, 1, bird.getRotation());
+        }
+    }
+
+    private void drawMenuUI() {
+        sb.draw(AssetsLoader.flLogo, 136 / 2 - 56, midPointY - 50, AssetsLoader.flLogo.getRegionWidth() / 1.2f, AssetsLoader.flLogo.getRegionHeight() / 1.2f);
+
+        for (SimpleButton button : menuButtons) {
+            button.draw(sb);
+        }
+    }
+
+    private void drawScore()
+    {
+        int length = ("" + gameWorld.getScore()).length();
+        AssetsLoader.fontShadow.draw(sb, "" + gameWorld.getScore(), 68 - (3 * length), midPointY - 82);
+        AssetsLoader.font.draw(sb, "" + gameWorld.getScore(), 68 - (3 * length), midPointY - 83);
+    }
+
+    public void render(float runTime) {
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -126,7 +155,7 @@ public class GameRenderer {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         // Draw background color
-        shapeRenderer.setColor(55/255.0f, 80/255.0f, 100/255.0f, 1);
+        shapeRenderer.setColor(55 / 255.0f, 80 / 255.0f, 100 / 255.0f, 1);
         shapeRenderer.rect(0, 0, 136, midPointY + 66);
 
         // Draw dirt
@@ -159,26 +188,26 @@ public class GameRenderer {
         // Draw skulls
         drawSkulls();
 
-        if(bird.shouldNotFlap())
+        if (gameWorld.isRunning())
         {
-            sb.draw(midBird, bird.getX(), bird.getY(), bird.getWidth() / 2.0f, bird.getHeight() / 2.0f,
-                    bird.getWidth(), bird.getHeight(), 1, 1, bird.getRotation());
-        }
-        else
+            drawBird(runTime);
+            drawScore();
+        }else if (gameWorld.isReady()) {
+            drawBird(runTime);
+            drawScore();
+        } else if (gameWorld.isMenu())
         {
-            sb.draw(birdAnimations.getKeyFrame(runTime), bird.getX(), bird.getY(), bird.getWidth() / 2.0f, bird.getHeight() / 2.0f,
-                    bird.getWidth(), bird.getHeight(), 1, 1, bird.getRotation());
+            drawCenteredBird(runTime);
+            drawMenuUI();
+        } else if (gameWorld.isGameOver())
+        {
+            drawBird(runTime);
+            drawScore();
+        }else if(gameWorld.isHighScore())
+        {
+            drawBird(runTime);
+            drawScore();
         }
-
-        // Convert integer into string
-        String score = gameWorld.getScore() + "";
-
-        // Draw shadow first
-        AssetsLoader.fontShadow.draw(sb, "" + gameWorld.getScore(), (136 / 2) - (3 * score.length()), 12);
-
-        // Draw text
-        AssetsLoader.font.draw(sb, "" + gameWorld.getScore(), (136 / 2) - (3 * score.length() - 1), 11);
-
         sb.end();
     }
 }

@@ -1,6 +1,7 @@
 package com.tiengame.flappinlimbo.com.tiengame.helpers;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -9,22 +10,37 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class AssetsLoader {
 
-    public static Texture texture;
+    public static Texture texture, logoTexture;
     public static TextureRegion background, grass;
 
     public static Animation<TextureRegion> birdAnimations;
-    public static TextureRegion bird, downBird, upBird;
+    public static TextureRegion bird, downBird, upBird, logo, flLogo, playButtonUp, playButtonDown;
 
     public static TextureRegion skullUp, skullDown, column;
 
-    public static Sound dead, flap, score;
+    public static Sound dead, flap;
 
     public static BitmapFont font, fontShadow;
 
+    public static Preferences preferences;
+
     public static void load()
     {
+        logoTexture = new Texture(Gdx.files.internal("textures/logo.png"));
+        logoTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+        logo = new TextureRegion(logoTexture, 0, 0, 512, 114);
+
         texture = new Texture(Gdx.files.internal("textures/texture.png"));
         texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+
+        playButtonUp = new TextureRegion(texture, 0, 83, 29, 16);
+        playButtonDown = new TextureRegion(texture, 29, 83, 29, 16);
+        playButtonUp.flip(false, true);
+        playButtonDown.flip(false, true);
+
+        flLogo = new TextureRegion(texture, 0, 55, 135, 24);
+        flLogo.flip(false, true);
 
         background = new TextureRegion(texture, 0, 0, 136, 43);
         background.flip(false, true);
@@ -63,12 +79,34 @@ public class AssetsLoader {
         fontShadow = new BitmapFont(Gdx.files.internal("textures/shadow.fnt"));
         fontShadow.getData().setScale(.25f, -.25f);
 
+        // Create/retrieve preferences file
+        preferences = Gdx.app.getPreferences("FlappinLimbo");
+
+        // Default high score
+        if(!preferences.contains("highScore"))
+        {
+            preferences.putInteger("highScore", 0);
+        }
+    }
+
+    // Takes an integer and maps it to the high score String in the preferences file
+    public static void setHighScore(int highScore)
+    {
+        preferences.putInteger("highScore", highScore);
+        preferences.flush();
+    }
+
+    // Finds current high score to display
+    public static int getHighScore()
+    {
+        return preferences.getInteger("highScore");
     }
 
     public static void dispose()
     {
         // Dispose texture when we are finished
         texture.dispose();
+        logoTexture.dispose();
 
         dead.dispose();
         flap.dispose();

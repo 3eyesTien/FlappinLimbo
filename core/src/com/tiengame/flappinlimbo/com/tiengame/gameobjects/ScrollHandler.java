@@ -28,6 +28,22 @@ public class ScrollHandler {
         column3 = new Column(column2.getTailX() + COLUMN_GAP, 0, 22, 60, SCROLL_SPEED, posY);
     }
 
+    public void updateReady(float delta)
+    {
+        frontGrass.update(delta);
+        backGrass.update(delta);
+
+        // Same with grass
+        if(frontGrass.isOffScreen())
+        {
+            frontGrass.reset(backGrass.getTailX());
+        }
+        else if(backGrass.isOffScreen())
+        {
+            backGrass.reset(frontGrass.getTailX());
+        }
+    }
+
     public void update(float delta)
     {
         frontGrass.update(delta);

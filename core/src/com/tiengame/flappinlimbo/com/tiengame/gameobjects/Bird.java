@@ -14,6 +14,8 @@ public class Bird {
     private int width;
     private int height;
 
+    private float originalY;
+
     private boolean isAlive;
 
     private Circle boundingCircle;
@@ -23,6 +25,7 @@ public class Bird {
 
         this.width = width;
         this.height = height;
+        this.originalY = y;
         position = new Vector2(x, y);
         velocity = new Vector2(0,0);
         acceleration = new Vector2(0, 460);
@@ -75,6 +78,11 @@ public class Bird {
         }
     }
 
+    public void updateReady(float runTime)
+    {
+        position.y = 2 * (float) Math.sin(7 * runTime) + originalY;
+    }
+
     public void onClick()
     {
         if(isAlive)
@@ -82,17 +90,16 @@ public class Bird {
             AssetsLoader.flap.play();
             this.velocity.y = -140;
         }
-
     }
 
     public void onRestart(int y)
     {
         rotation = 0;
-        position.y = 0;
+        position.y = y;
         velocity.x = 0;
         velocity.y = 0;
         acceleration.x = 0;
-        acceleration.y = 0;
+        acceleration.y = 460;
         isAlive = true;
     }
 
@@ -130,7 +137,6 @@ public class Bird {
     // Determine when to stop animating the bird's flap
     public boolean shouldNotFlap()
     {
-
         return velocity.y > 70 || !isAlive;
     }
 
@@ -149,6 +155,4 @@ public class Bird {
         // Bird should stop accelerating downwards once it's dead
         acceleration.y = 0;
     }
-
-
 }
